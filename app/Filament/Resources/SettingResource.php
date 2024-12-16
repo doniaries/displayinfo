@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SettingResource\Pages;
 use App\Filament\Resources\SettingResource\RelationManagers;
 use App\Models\Setting;
+use App\Models\Team;
+use App\Services\LocationService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -12,7 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Services\LocationService;
 
 class SettingResource extends Resource
 {
@@ -34,11 +35,15 @@ class SettingResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('nama_aplikasi')
-                    ->required()
+                    // ->hidden()
+                    ->default(' Display Informasi')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('nama_institusi')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Select::make('nama_institusi')
+                    ->autofocus()
+                    ->options(function () {
+                        return Team::orderBy('name')->pluck('name', 'name');
+                    })
+                    ->required(),
                 Forms\Components\TextInput::make('alamat')
                     ->required()
                     ->maxLength(255),
@@ -121,8 +126,8 @@ class SettingResource extends Resource
         ];
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()->whereBelongsTo(auth()->user()->currentTeam);
-    }
+    // public static function getEloquentQuery(): Builder
+    // {
+    //     return parent::getEloquentQuery()->whereBelongsTo(auth()->user()->currentTeam);
+    // }
 }

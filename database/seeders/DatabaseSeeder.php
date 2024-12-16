@@ -38,7 +38,150 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        // Step 1: Buat teams
+        // Step 1: Create base permissions (without team prefix)
+        $basePermissions = [
+            // Resource permissions
+            'view_agenda',
+            'view_any_agenda',
+            'create_agenda',
+            'update_agenda',
+            'restore_agenda',
+            'restore_any_agenda',
+            'replicate_agenda',
+            'reorder_agenda',
+            'delete_agenda',
+            'delete_any_agenda',
+            'force_delete_agenda',
+            'force_delete_any_agenda',
+
+            'view_banner',
+            'view_any_banner',
+            'create_banner',
+            'update_banner',
+            'restore_banner',
+            'restore_any_banner',
+            'replicate_banner',
+            'reorder_banner',
+            'delete_banner',
+            'delete_any_banner',
+            'force_delete_banner',
+            'force_delete_any_banner',
+
+            'view_informasi',
+            'view_any_informasi',
+            'create_informasi',
+            'update_informasi',
+            'restore_informasi',
+            'restore_any_informasi',
+            'replicate_informasi',
+            'reorder_informasi',
+            'delete_informasi',
+            'delete_any_informasi',
+            'force_delete_informasi',
+            'force_delete_any_informasi',
+
+            'view_quotes',
+            'view_any_quotes',
+            'create_quotes',
+            'update_quotes',
+            'restore_quotes',
+            'restore_any_quotes',
+            'replicate_quotes',
+            'reorder_quotes',
+            'delete_quotes',
+            'delete_any_quotes',
+            'force_delete_quotes',
+            'force_delete_any_quotes',
+
+            'view_role',
+            'view_any_role',
+            'create_role',
+            'update_role',
+            'delete_role',
+            'delete_any_role',
+
+            'view_running::text',
+            'view_any_running::text',
+            'create_running::text',
+            'update_running::text',
+            'restore_running::text',
+            'restore_any_running::text',
+            'replicate_running::text',
+            'reorder_running::text',
+            'delete_running::text',
+            'delete_any_running::text',
+            'force_delete_running::text',
+            'force_delete_any_running::text',
+
+            'view_setting',
+            'view_any_setting',
+            'create_setting',
+            'update_setting',
+            'restore_setting',
+            'restore_any_setting',
+            'replicate_setting',
+            'reorder_setting',
+            'delete_setting',
+            'delete_any_setting',
+            'force_delete_setting',
+            'force_delete_any_setting',
+
+            'view_team',
+            'view_any_team',
+            'create_team',
+            'update_team',
+            'restore_team',
+            'restore_any_team',
+            'replicate_team',
+            'reorder_team',
+            'delete_team',
+            'delete_any_team',
+            'force_delete_team',
+            'force_delete_any_team',
+
+            'view_user',
+            'view_any_user',
+            'create_user',
+            'update_user',
+            'restore_user',
+            'restore_any_user',
+            'replicate_user',
+            'reorder_user',
+            'delete_user',
+            'delete_any_user',
+            'force_delete_user',
+            'force_delete_any_user',
+
+            'view_video',
+            'view_any_video',
+            'create_video',
+            'update_video',
+            'restore_video',
+            'restore_any_video',
+            'replicate_video',
+            'reorder_video',
+            'delete_video',
+            'delete_any_video',
+            'force_delete_video',
+            'force_delete_any_video',
+
+            // Custom permissions
+            'page_DisplayButton'
+        ];
+
+        // Create base permissions
+        foreach ($basePermissions as $permission) {
+            Permission::create(['name' => $permission, 'guard_name' => 'web']);
+        }
+
+        // Create global roles
+        $superAdminRole = Role::create(['name' => 'super_admin', 'guard_name' => 'web']);
+        $superAdminRole->givePermissionTo(Permission::all());
+
+        $userRole = Role::create(['name' => 'user', 'guard_name' => 'web']);
+        // Assign basic permissions to user role as needed
+
+        // Step 2: Create teams and their specific permissions/roles
         $createdTeams = [];
         foreach ($teamsData as $teamData) {
             $team = Team::create([
@@ -47,136 +190,61 @@ class DatabaseSeeder extends Seeder
             ]);
             $createdTeams[] = $team;
 
-            // Base permissions tanpa prefix
-            $basePermissions = [
-                // User Management
-                'view_any_user',
-                'view_user',
-                'create_user',
-                'update_user',
-                'delete_user',
-                'restore_user',
-                'force_delete_user',
-
-                // Setting Management
-                'view_any_setting',
-                'view_setting',
-                'create_setting',
-                'update_setting',
-                'delete_setting',
-
-                // Content Management
-                'view_any_banner',
-                'view_banner',
-                'create_banner',
-                'update_banner',
-                'delete_banner',
-
-                'view_any_informasi',
-                'view_informasi',
-                'create_informasi',
-                'update_informasi',
-                'delete_informasi',
-
-                'view_any_agenda',
-                'view_agenda',
-                'create_agenda',
-                'update_agenda',
-                'delete_agenda',
-
-                'view_any_running_text',
-                'view_running_text',
-                'create_running_text',
-                'update_running_text',
-                'delete_running_text',
-
-                'view_any_quote',
-                'view_quote',
-                'create_quote',
-                'update_quote',
-                'delete_quote',
-
-                'view_any_video',
-                'view_video',
-                'create_video',
-                'update_video',
-                'delete_video',
-            ];
-
-            // Buat permission dengan prefix team_id
+            // Create team-specific permissions
+            $teamPermissions = [];
             foreach ($basePermissions as $permission) {
-                Permission::create([
-                    'name' => "team_{$team->id}_{$permission}",
-                    'guard_name' => 'web',
-                    'team_id' => $team->id
-                ]);
+                if (!str_contains($permission, 'team') && !str_contains($permission, 'role')) {
+                    $teamPermission = Permission::create([
+                        'name' => "team_{$team->id}_{$permission}",
+                        'guard_name' => 'web',
+                        'team_id' => $team->id,
+                    ]);
+                    $teamPermissions[] = $teamPermission->name;
+                }
             }
 
-            // Tambahkan permission untuk Role dan Permission Management
-            $rolePermissions = [
-                'view_any_role',
-                'view_role',
-                'create_role',
-                'update_role',
-                'delete_role',
-                'view_any_permission',
-                'view_permission',
-                'create_permission',
-                'update_permission',
-                'delete_permission',
-            ];
-
-            foreach ($rolePermissions as $permission) {
-                Permission::create([
-                    'name' => "team_{$team->id}_{$permission}",
-                    'guard_name' => 'web',
-                    'team_id' => $team->id
-                ]);
-            }
-
-            // Buat roles dengan prefix team_id
-            $superAdminRole = Role::create([
+            // Create team-specific roles
+            $teamSuperAdminRole = Role::create([
                 'name' => "team_{$team->id}_super_admin",
                 'guard_name' => 'web',
-                'team_id' => $team->id
+                'team_id' => $team->id,
             ]);
+            $teamSuperAdminRole->givePermissionTo($teamPermissions);
 
-            // Super Admin mendapatkan semua permission
-            $superAdminRole->givePermissionTo(Permission::where('team_id', $team->id)->get());
-
-            $adminRole = Role::create([
+            $teamAdminRole = Role::create([
                 'name' => "team_{$team->id}_admin",
                 'guard_name' => 'web',
-                'team_id' => $team->id
+                'team_id' => $team->id,
             ]);
 
-            // Filter permissions untuk admin (exclude Role & Permission Management)
-            $adminPermissions = Permission::where('team_id', $team->id)
-                ->where(function ($query) {
-                    $query->where('name', 'not like', '%_role%')
-                        ->where('name', 'not like', '%_permission%')
-                        ->where('name', 'not like', '%_user%');
-                })
-                ->get();
+            // Filter permissions for regular admin (exclude user management)
+            $adminPermissions = collect($teamPermissions)->filter(function ($permission) {
+                return !str_contains($permission, '_user_') &&
+                    !str_contains($permission, '_role_') &&
+                    !str_contains($permission, '_permission_');
+            })->toArray();
 
-            $adminRole->givePermissionTo($adminPermissions);
+            $teamAdminRole->givePermissionTo($adminPermissions);
         }
 
-        // Step 2: Buat Super Admin
-        $superadmin = User::create([
+        // Step 3: Create Super Admin user
+        $superAdmin = User::create([
             'name' => 'Super Admin',
             'email' => 'superadmin@gmail.com',
             'password' => bcrypt('password'),
-            'current_team_id' => $createdTeams[0]->id
+            'current_team_id' => $createdTeams[0]->id,
         ]);
 
-        // Attach super admin ke semua team dengan full permissions
+        // Assign global super_admin role
+        $superAdmin->assignRole('super_admin');
+
+        // Attach super admin to all teams
         foreach ($createdTeams as $team) {
-            $superadmin->teams()->attach($team->id);
-            $superadmin->assignRole("team_{$team->id}_super_admin");
+            $superAdmin->teams()->attach($team->id);
+            $superAdmin->assignRole("team_{$team->id}_super_admin");
         }
 
-        // Step 3: Buat admin per team
+        // Step 4: Create admin users for each team
         foreach ($teamsData as $index => $teamData) {
             $team = $createdTeams[$index];
 
@@ -184,13 +252,14 @@ class DatabaseSeeder extends Seeder
                 'name' => $teamData['admin']['name'],
                 'email' => $teamData['admin']['email'],
                 'password' => bcrypt('password'),
-                'current_team_id' => $team->id
+                'current_team_id' => $team->id,
             ]);
 
+            // Attach admin to their specific team only
             $admin->teams()->attach($team->id);
             $admin->assignRole("team_{$team->id}_admin");
 
-            // Buat setting untuk team
+            // Create settings for the team
             Setting::create([
                 'team_id' => $team->id,
                 'nama_aplikasi' => "Display Informasi Digital {$team->name}",

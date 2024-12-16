@@ -4,9 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Setting;
 use App\Models\Team;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
 
 // Redirect root ke tenant dashboard jika user sudah login
