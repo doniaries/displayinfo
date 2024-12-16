@@ -19,7 +19,7 @@ class TeamResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 1;
-    protected static ?string $tenantOwnershipRelationshipName = 'team';
+    public static ?string $tenantOwnershipRelationshipName = 'users';
 
     public static function form(Form $form): Form
     {

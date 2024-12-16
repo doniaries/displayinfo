@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Team extends Model
 {
@@ -14,11 +15,10 @@ class Team extends Model
     ];
 
 
-    public function team(): BelongsToMany
+    public function getFilamentName(): string
     {
-        return $this->belongsToMany(User::class);
+        return $this->name;
     }
-
 
     public function users(): BelongsToMany
     {
@@ -58,5 +58,17 @@ class Team extends Model
     public function videos(): HasMany
     {
         return $this->hasMany(Video::class);
+    }
+
+    // -------------------//
+
+    public function roles(): HasMany
+    {
+        return $this->hasMany(Role::class);
+    }
+
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(Permission::class);
     }
 }

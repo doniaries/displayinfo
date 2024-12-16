@@ -5,14 +5,16 @@ namespace App\Models;
 use Filament\Models\Contracts\HasTenants;  // Tambahkan ini
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasTenants  // Tambahkan implements
 {
-    use Notifiable;
+    use Notifiable, HasRoles;
 
     protected $fillable = [
         'name',
@@ -38,7 +40,12 @@ class User extends Authenticatable implements HasTenants  // Tambahkan implement
 
     public function canAccessTenant(Model $tenant): bool
     {
-        // Check if user belongs to the team
+        // Tambahkan logging untuk debug
+        Log::info('Checking tenant access', [
+            'user_id' => $this->id,
+            'tenant_id' => $tenant->id
+        ]);
+
         return $this->teams->contains($tenant);
     }
 
@@ -55,5 +62,11 @@ class User extends Authenticatable implements HasTenants  // Tambahkan implement
     public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'current_team_id');
+    }
+
+
+    protected function getDefaultGuardName(): string
+    {
+        return 'web';
     }
 }
