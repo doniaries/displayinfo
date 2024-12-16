@@ -5,10 +5,7 @@ use App\Models\Setting;
 use App\Models\Team;
 use Illuminate\Support\Facades\URL;
 
-// Force HTTPS in production
-if (app()->environment('production')) {
-    URL::forceScheme('https');
-}
+
 
 // Welcome page route
 Route::get('/', function () {
