@@ -10,28 +10,18 @@ class InformasiPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
+    public function view(User $user, Informasi $informasi): bool
     {
-        return true; // Semua user bisa lihat list
+        return $user->is_admin || $user->current_team_id === $informasi->team_id;
     }
 
-    public function view(User $user, Content $content): bool
+    public function update(User $user, Informasi $informasi): bool
     {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
+        return $user->is_admin || $user->current_team_id === $informasi->team_id;
     }
 
-    public function create(User $user): bool
+    public function delete(User $user, Informasi $informasi): bool
     {
-        return true; // Semua user bisa create
-    }
-
-    public function update(User $user, Content $content): bool
-    {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
-    }
-
-    public function delete(User $user, Content $content): bool
-    {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
+        return $user->is_admin || $user->current_team_id === $informasi->team_id;
     }
 }

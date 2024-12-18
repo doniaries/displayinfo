@@ -10,28 +10,18 @@ class BannerPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
+    public function view(User $user, Banner $banner): bool
     {
-        return true; // Semua user bisa lihat list
+        return $user->is_admin || $user->current_team_id === $banner->team_id;
     }
 
-    public function view(User $user, Content $content): bool
+    public function update(User $user, Banner $banner): bool
     {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
+        return $user->is_admin || $user->current_team_id === $banner->team_id;
     }
 
-    public function create(User $user): bool
+    public function delete(User $user, Banner $banner): bool
     {
-        return true; // Semua user bisa create
-    }
-
-    public function update(User $user, Content $content): bool
-    {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
-    }
-
-    public function delete(User $user, Content $content): bool
-    {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
+        return $user->is_admin || $user->current_team_id === $banner->team_id;
     }
 }

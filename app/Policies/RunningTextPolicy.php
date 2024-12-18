@@ -14,28 +14,18 @@ class RunningTextPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function view(User $user, RunningText $runningText): bool
     {
-        return true; // Semua user bisa lihat list
+        return $user->is_admin || $user->current_team_id === $runningText->team_id;
     }
 
-    public function view(User $user, Content $content): bool
+    public function update(User $user, RunningText $runningText): bool
     {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
+        return $user->is_admin || $user->current_team_id === $runningText->team_id;
     }
 
-    public function create(User $user): bool
+    public function delete(User $user, RunningText $runningText): bool
     {
-        return true; // Semua user bisa create
-    }
-
-    public function update(User $user, Content $content): bool
-    {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
-    }
-
-    public function delete(User $user, Content $content): bool
-    {
-        return $user->is_admin || $user->current_team_id === $content->team_id;
+        return $user->is_admin || $user->current_team_id === $runningText->team_id;
     }
 }

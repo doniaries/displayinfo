@@ -10,27 +10,17 @@ class VideoPolicy
 {
     use HandlesAuthorization;
 
-    public function viewAny(User $user): bool
-    {
-        return true;
-    }
-
-    public function view(User $user, Video $video): bool
+    public function view(User $user, video $video): bool
     {
         return $user->is_admin || $user->current_team_id === $video->team_id;
     }
 
-    public function create(User $user): bool
-    {
-        return true;
-    }
-
-    public function update(User $user, Video $video): bool
+    public function update(User $user, video $video): bool
     {
         return $user->is_admin || $user->current_team_id === $video->team_id;
     }
 
-    public function delete(User $user, Video $video): bool
+    public function delete(User $user, video $video): bool
     {
         return $user->is_admin || $user->current_team_id === $video->team_id;
     }
