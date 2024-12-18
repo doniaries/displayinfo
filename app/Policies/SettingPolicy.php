@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class SettingPolicy
@@ -15,7 +15,8 @@ class SettingPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_setting');
+        // User dapat melihat setting jika memiliki team
+        return $user->current_team_id !== null;
     }
 
     /**
@@ -23,7 +24,8 @@ class SettingPolicy
      */
     public function view(User $user, Setting $setting): bool
     {
-        return $user->can('view_setting');
+        // User hanya dapat melihat setting dari team mereka
+        return $user->current_team_id === $setting->team_id;
     }
 
     /**
@@ -31,7 +33,8 @@ class SettingPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_setting');
+        // User dapat membuat setting jika memiliki team
+        return $user->current_team_id !== null;
     }
 
     /**
@@ -39,7 +42,8 @@ class SettingPolicy
      */
     public function update(User $user, Setting $setting): bool
     {
-        return $user->can('update_setting');
+        // User hanya dapat mengupdate setting dari team mereka
+        return $user->current_team_id === $setting->team_id;
     }
 
     /**
@@ -47,62 +51,25 @@ class SettingPolicy
      */
     public function delete(User $user, Setting $setting): bool
     {
-        return $user->can('delete_setting');
+        // User hanya dapat menghapus setting dari team mereka
+        return $user->current_team_id === $setting->team_id;
     }
 
     /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
-    {
-        return $user->can('delete_any_setting');
-    }
-
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, Setting $setting): bool
-    {
-        return $user->can('force_delete_setting');
-    }
-
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
-    {
-        return $user->can('force_delete_any_setting');
-    }
-
-    /**
-     * Determine whether the user can restore.
+     * Determine whether the user can restore the model.
      */
     public function restore(User $user, Setting $setting): bool
     {
-        return $user->can('restore_setting');
+        // User hanya dapat memulihkan setting dari team mereka
+        return $user->current_team_id === $setting->team_id;
     }
 
     /**
-     * Determine whether the user can bulk restore.
+     * Determine whether the user can permanently delete the model.
      */
-    public function restoreAny(User $user): bool
+    public function forceDelete(User $user, Setting $setting): bool
     {
-        return $user->can('restore_any_setting');
-    }
-
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, Setting $setting): bool
-    {
-        return $user->can('replicate_setting');
-    }
-
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
-    {
-        return $user->can('reorder_setting');
+        // User hanya dapat menghapus permanen setting dari team mereka
+        return $user->current_team_id === $setting->team_id;
     }
 }

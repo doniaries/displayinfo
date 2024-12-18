@@ -2,14 +2,14 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\DisplayButton;
-use App\Filament\Resources\TeamResource;
 use App\Models\Setting;
 use App\Models\Team;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -22,7 +22,16 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
+use App\Filament\Pages\DisplayButton;
+use App\Filament\Resources\AgendaResource;
+use App\Filament\Resources\BannerResource;
+use App\Filament\Resources\InformasiResource;
+use App\Filament\Resources\QuotesResource;
+use App\Filament\Resources\RunningTextResource;
+use App\Filament\Resources\SettingResource;
+use App\Filament\Resources\TeamResource;
+use App\Filament\Resources\UserResource;
+use App\Filament\Resources\VideoResource;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -34,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('Display Informasi') // Nama default jika setting belum ada
+            ->brandName('Display Informasi')
             ->colors([
                 'primary' => Color::Blue,
                 'secondary' => Color::Slate,
@@ -43,13 +52,25 @@ class AdminPanelProvider extends PanelProvider
                 'success' => Color::Emerald,
                 'info' => Color::Cyan,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->navigationGroups([
+                'Konten',
+                'Pengaturan'
+            ])
+            ->resources([
+                AgendaResource::class,
+                BannerResource::class,
+                InformasiResource::class,
+                QuotesResource::class,
+                RunningTextResource::class,
+                VideoResource::class,
+                SettingResource::class,
+                TeamResource::class,
+                UserResource::class,
+            ])
             ->pages([
                 Pages\Dashboard::class,
                 DisplayButton::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -68,21 +89,18 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->plugins([
-                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
-            ])
             ->tenant(
                 Team::class,
                 slugAttribute: 'slug',
                 ownershipRelationship: 'team',
-
             )
-            ->tenantRoutePrefix('instansi')  // Menambahkan prefix untuk tenant
+            ->tenantRoutePrefix('instansi')
             ->tenantMenuItems([
                 MenuItem::make()
                     ->label('Settings')
                     ->icon('heroicon-o-cog-6-tooth')
-                    ->url(fn() => TeamResource::getUrl('edit', ['record' => auth()->user()?->currentTeam])),
+                    ->url(fn() => TeamResource::getUrl('edit', ['record' => auth()->user()?->currentTeam]))
+                    ->visible(fn() => auth()->user()?->currentTeam !== null),
             ]);
     }
 }

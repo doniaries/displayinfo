@@ -17,9 +17,15 @@ class TeamResource extends Resource
     protected static ?string $model = Team::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
-    protected static ?string $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 1;
     public static ?string $tenantOwnershipRelationshipName = 'users';
+    protected static ?string $navigationGroup = 'Pengaturan';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Hanya tampilkan untuk admin
+        return auth()->user()->is_admin;
+    }
 
     public static function form(Form $form): Form
     {

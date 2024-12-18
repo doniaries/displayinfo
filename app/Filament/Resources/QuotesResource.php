@@ -22,7 +22,25 @@ class QuotesResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
     protected static ?int $navigationSort = 4;
     protected static ?string $tenantOwnershipRelationshipName = 'team';
-    // protected static ?string $navigationGroup = 'Konten';
+    protected static ?string $navigationGroup = 'Konten';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Tampilkan untuk semua user yang memiliki team
+        return auth()->check() && (auth()->user()->is_admin || auth()->user()->current_team_id !== null);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        // Jika bukan admin, filter berdasarkan team
+        if (!auth()->user()->is_admin) {
+            return $query->whereBelongsTo(auth()->user()->currentTeam);
+        }
+
+        return $query;
+    }
 
     public static function form(Form $form): Form
     {

@@ -10,99 +10,29 @@ class QuotesPolicy
 {
     use HandlesAuthorization;
 
-    /**
-     * Determine whether the user can view any models.
-     */
+
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_quotes');
+        return true; // Semua user bisa lihat list
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Quotes $quotes): bool
+    public function view(User $user, Content $content): bool
     {
-        return $user->can('view_quotes');
+        return $user->is_admin || $user->current_team_id === $content->team_id;
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
     public function create(User $user): bool
     {
-        return $user->can('create_quotes');
+        return true; // Semua user bisa create
     }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Quotes $quotes): bool
+    public function update(User $user, Content $content): bool
     {
-        return $user->can('update_quotes');
+        return $user->is_admin || $user->current_team_id === $content->team_id;
     }
 
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Quotes $quotes): bool
+    public function delete(User $user, Content $content): bool
     {
-        return $user->can('delete_quotes');
-    }
-
-    /**
-     * Determine whether the user can bulk delete.
-     */
-    public function deleteAny(User $user): bool
-    {
-        return $user->can('delete_any_quotes');
-    }
-
-    /**
-     * Determine whether the user can permanently delete.
-     */
-    public function forceDelete(User $user, Quotes $quotes): bool
-    {
-        return $user->can('force_delete_quotes');
-    }
-
-    /**
-     * Determine whether the user can permanently bulk delete.
-     */
-    public function forceDeleteAny(User $user): bool
-    {
-        return $user->can('force_delete_any_quotes');
-    }
-
-    /**
-     * Determine whether the user can restore.
-     */
-    public function restore(User $user, Quotes $quotes): bool
-    {
-        return $user->can('restore_quotes');
-    }
-
-    /**
-     * Determine whether the user can bulk restore.
-     */
-    public function restoreAny(User $user): bool
-    {
-        return $user->can('restore_any_quotes');
-    }
-
-    /**
-     * Determine whether the user can replicate.
-     */
-    public function replicate(User $user, Quotes $quotes): bool
-    {
-        return $user->can('replicate_quotes');
-    }
-
-    /**
-     * Determine whether the user can reorder.
-     */
-    public function reorder(User $user): bool
-    {
-        return $user->can('reorder_quotes');
+        return $user->is_admin || $user->current_team_id === $content->team_id;
     }
 }

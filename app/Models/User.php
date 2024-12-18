@@ -10,11 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements HasTenants  // Tambahkan implements
 {
-    use Notifiable, HasRoles;
+    use Notifiable;
 
     protected $fillable = [
         'name',
@@ -31,6 +30,7 @@ class User extends Authenticatable implements HasTenants  // Tambahkan implement
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'is_admin' => 'boolean',
     ];
 
     public function getTenants(Panel $panel): array|\Illuminate\Support\Collection
@@ -40,13 +40,7 @@ class User extends Authenticatable implements HasTenants  // Tambahkan implement
 
     public function canAccessTenant(Model $tenant): bool
     {
-        // Tambahkan logging untuk debug
-        Log::info('Checking tenant access', [
-            'user_id' => $this->id,
-            'tenant_id' => $tenant->id
-        ]);
-
-        return $this->teams->contains($tenant);
+        return $this->is_admin || $this->teams->contains($tenant);
     }
 
     public function teams(): BelongsToMany

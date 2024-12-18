@@ -17,9 +17,26 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $navigationGroup = 'Settings';
     protected static ?string $navigationLabel = 'Users';
     protected static ?int $navigationSort = 2;
+    protected static ?string $navigationGroup = 'Pengaturan';
+    protected static ?string $tenantOwnershipRelationshipName = 'team';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->check() && (auth()->user()->is_admin || auth()->user()->current_team_id !== null);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (!auth()->user()->is_admin) {
+            return $query->whereBelongsTo(auth()->user()->currentTeam);
+        }
+
+        return $query;
+    }
 
     public static function form(Form $form): Form
     {
@@ -100,14 +117,6 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->whereHas('teams', function (Builder $query) {
-                $query->where('teams.id', auth()->user()->currentTeam->id);
-            });
     }
 
     public static function getNavigationBadge(): ?string

@@ -15,10 +15,7 @@ class Team extends Model
     ];
 
 
-    public function getFilamentName(): string
-    {
-        return $this->name;
-    }
+
 
     public function users(): BelongsToMany
     {
@@ -62,13 +59,5 @@ class Team extends Model
 
     // -------------------//
 
-    public function roles(): HasMany
-    {
-        return $this->hasMany(Role::class);
-    }
 
-    public function permissions(): HasMany
-    {
-        return $this->hasMany(Permission::class);
-    }
 }
