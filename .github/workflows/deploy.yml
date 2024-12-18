@@ -39,14 +39,17 @@ jobs:
           server: ftp.successmandiri.com
           username: display@display.successmandiri.com
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps # Menggunakan FTPS
+          protocol: ftp # Kembali ke FTP biasa
           port: 21
           server-dir: /display/
           local-dir: ./
-          security: strict # Menggunakan keamanan strict
+          security: loose # Set security ke loose untuk mengabaikan masalah sertifikat
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
             **/vendor/**
             **/.env*
+            .env
+            .env.example
+          dangerous-clean-slate: true
