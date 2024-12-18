@@ -10,27 +10,98 @@ class TeamPolicy
 {
     use HandlesAuthorization;
 
+    /**
+     * Determine whether the user can view any models.
+     */
     public function viewAny(User $user): bool
     {
         return $user->is_admin;
     }
 
-    public function view(User $user, AdminModel $model): bool
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, Team $team): bool
     {
-        return $user->is_admin;
+        return $user->is_admin || $user->teams->contains($team);
     }
 
+    /**
+     * Determine whether the user can create models.
+     */
     public function create(User $user): bool
     {
         return $user->is_admin;
     }
 
-    public function update(User $user, AdminModel $model): bool
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, Team $team): bool
     {
         return $user->is_admin;
     }
 
-    public function delete(User $user, AdminModel $model): bool
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, Team $team): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can bulk delete.
+     */
+    public function deleteAny(User $user): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can permanently delete.
+     */
+    public function forceDelete(User $user, Team $team): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can permanently bulk delete.
+     */
+    public function forceDeleteAny(User $user): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can restore.
+     */
+    public function restore(User $user, Team $team): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can bulk restore.
+     */
+    public function restoreAny(User $user): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can replicate.
+     */
+    public function replicate(User $user, Team $team): bool
+    {
+        return $user->is_admin;
+    }
+
+    /**
+     * Determine whether the user can reorder.
+     */
+    public function reorder(User $user): bool
     {
         return $user->is_admin;
     }
