@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Setting extends Model
 {
