@@ -41,8 +41,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp # Kembali ke FTP biasa
           port: 21
-          server-dir: /display/
-          local-dir: ./
+          # server-dir: /display/
+          # local-dir: ./
           security: loose # Set security ke loose untuk mengabaikan masalah sertifikat
           exclude: |
             **/.git*
