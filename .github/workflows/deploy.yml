@@ -36,12 +36,14 @@ jobs:
       - name: Deploy to Server
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp.successmandiri.com # Server dari gambar
-          username: display@display.successmandiri.com # Username dari gambar
+          server: ftp.successmandiri.com
+          username: display@display.successmandiri.com
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21 # Port dari gambar
-          server-dir: /display/ # Direktori tujuan
-          local-dir: ./ # Direktori lokal yang akan diupload
+          protocol: ftps # Menggunakan FTPS
+          port: 21
+          server-dir: /display/
+          local-dir: ./
+          security: strict # Menggunakan keamanan strict
           exclude: |
             **/.git*
             **/.git*/**
